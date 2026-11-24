@@ -6,7 +6,7 @@
 /*   By: andrefe2 <andrefe2@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/21 16:08:32 by andrefe2          #+#    #+#             */
-/*   Updated: 2026/11/23 14:31:01 by andrefe2         ###   ########.fr       */
+/*   Updated: 2026/11/24 17:57:26 by andrefe2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,11 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-
-/*
 int	main(void)
 {
-	char	str1[] = "HELLO";
+	char	*str1 = NULL;
 	char	str2[] = "ZAUUU";
 
 	printf("%s", ft_strjoin(str1, str2));
 
 }
-*/
