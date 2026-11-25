@@ -6,15 +6,15 @@
 /*   By: andrefe2 <andrefe2@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/21 16:08:32 by andrefe2          #+#    #+#             */
-/*   Updated: 2026/11/24 17:57:26 by andrefe2         ###   ########.fr       */
+/*   Updated: 2026/11/25 15:06:55 by andrefe2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strlen(char *str)
+size_t	ft_strlen(const char *str)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (str[i] != '\0')
@@ -22,15 +22,17 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_strchr(char	*s, char c)
+const char	*ft_strchr(const char *s, const char c)
 {
 	int	i;
 
 	i = 0;
+	if (s == NULL)
+		return (NULL);
 	while (s[i] != '\0')
 	{
 		if (s[i] == c)
-			return (&s[i]);
+			return (&s[i + 1]);
 		i++;
 	}
 	if (c == '\0')
@@ -38,19 +40,19 @@ char	*ft_strchr(char	*s, char c)
 	return (NULL);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
 	int		i;
 	int		j;
-	int		len1;
-	int		len2;
 	char	*str;
 
 	i = 0;
 	j = 0;
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	str = malloc ((len1 + len2 + 1) * sizeof(char));
+	if (s1 == NULL)
+		s1 = "";
+	if (s2 == NULL)
+		s2 = "";
+	str = malloc ((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	while (s1[i] != '\0')
@@ -64,6 +66,32 @@ char	*ft_strjoin(char *s1, char *s2)
 		j++;
 	}
 	str[i + j] = '\0';
+	return (str);
+}
+
+char *ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t			i;
+	size_t			slen;
+	char			*str;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	slen = ft_strlen(s);
+	if (start >= slen)
+    	len = 0;
+	else if (len > slen - start)
+    	len = slen - start;
+	str = malloc((len + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	while (i < len)
+	{
+		str[i] = s[start + i];
+		i++;
+	}
+	str[len] = '\0';
 	return (str);
 }
 
