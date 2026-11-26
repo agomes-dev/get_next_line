@@ -6,7 +6,7 @@
 /*   By: andrefe2 <andrefe2@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/21 16:08:38 by andrefe2          #+#    #+#             */
-/*   Updated: 2026/11/25 15:07:32 by andrefe2         ###   ########.fr       */
+/*   Updated: 2026/11/26 15:28:30 by andrefe2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,89 +14,98 @@
 
 char	*get_next_line(int fd)
 {
-	char		*new_stash;
 	static char	*stash;
-	char		*buffer;
-	ssize_t		bytes_read;
 	char		*line;
-	char		*temp;
-	size_t		i;
-	size_t		j;
+	int			status;
 
-	if (BUFFER_SIZE <= 0)
-    	return (NULL);
-	if (fd < 0)
-    	return (NULL);
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!buffer)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (ft_strchr(stash, '\n') == NULL)
-	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read == -1)
-		{
-			free(buffer);
-			free(stash);
-			stash = NULL;
-			return (NULL);
-		}
-		if (bytes_read == 0)
-		{
-			if ((!stash) || (stash[0] == '\0'))
-			{
-				free(buffer);
-				free(stash);
-				stash = NULL;
-				return (NULL);
-			}
-			i = ft_strlen(stash);
-			line = ft_substr(stash, 0, i);
-			free(buffer);
-			free(stash);
-			stash = NULL;
-			return (line);
-		}
-		if (bytes_read > 0)
-		{
-			buffer[bytes_read] = '\0';
-			temp = ft_strjoin(stash, buffer);
-			if (temp == NULL)
-			{
-				free(stash);
-				free(buffer);
-				stash = NULL;
-				return (NULL);
-			}
-			free(stash);
-			stash = temp;
-		}
-	}
-	free(buffer);
-	i = ft_strlen(stash);
-	j = ft_strlen(ft_strchr(stash, '\n'));
-	line = ft_substr(stash, 0, i - j);
-	if (!line)
+	status = ft_read_to_stash(fd, &stash);
+	if (status == -1)
+		return (NULL);
+	if (!stash || !stash[0])
 	{
 		free(stash);
 		stash = NULL;
 		return (NULL);
 	}
-	new_stash = ft_substr(ft_strchr(stash, '\n'), 0, j);
-	if(!new_stash)
-	{
-		free(stash);
-		free(line);
-		stash = NULL;
-		line = NULL;
-		return (NULL);
-	}
-	free(stash);
-	stash = new_stash;
+	line = ft_extract_line(&stash);
 	return (line);
 }
 
-
-int	main(void)
+int	ft_read_to_stash(int fd, char **stash)
 {
-	get_next_line(open("fd.txt", O_RDONLY));
+	ssize_t	bytes_read;
+	char	*buffer;
+
+	if (ft_strchr(*stash, '\n'))
+		return (1);
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (ft_free_all(NULL, stash));
+	while (ft_strchr(*stash, '\n') == NULL)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read == -1)
+			return (ft_free_all(buffer, stash));
+		if (bytes_read == 0)
+		{
+			free(buffer);
+			return (0);
+		}
+		buffer[bytes_read] = '\0';
+		if (ft_append_buffer(buffer, stash) == -1)
+			return (ft_free_all(buffer, stash));
+	}
+	free(buffer);
+	return (1);
+}
+
+int	ft_append_buffer(char *buffer, char **stash)
+{
+	char	*temp;
+
+	temp = ft_strjoin(*stash, buffer);
+	if (!temp)
+		return (-1);
+	free(*stash);
+	*stash = temp;
+	return (1);
+}
+
+char	*ft_extract_line(char **stash)
+{
+	const char	*newline;
+	char		*line;
+	char		*new_stash;
+	size_t	j;
+
+	newline = ft_strchr(*stash, '\n');
+	j = 0;
+	if (newline)
+		j = ft_strlen(newline);
+	line = ft_substr(*stash, 0, ft_strlen(*stash)- j);
+	if (!line)
+	{
+		ft_free_all(NULL, stash);
+		return (NULL);
+	}
+	new_stash = ft_substr(newline, 0, j);
+	if (newline && !new_stash)
+	{
+		free(line);
+		ft_free_all(NULL, stash);
+		return (NULL);
+	}
+	free(*stash);
+	*stash = new_stash;
+	return (line);
+}
+
+int	ft_free_all(char *buffer, char **stash)
+{
+	free(buffer);
+	free(*stash);
+	*stash = NULL;
+	return (-1);
 }
