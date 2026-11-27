@@ -6,7 +6,7 @@
 /*   By: andrefe2 <andrefe2@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/21 16:08:38 by andrefe2          #+#    #+#             */
-/*   Updated: 2026/11/26 15:28:30 by andrefe2         ###   ########.fr       */
+/*   Updated: 2026/11/27 12:40:21 by andrefe2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,4 +108,24 @@ int	ft_free_all(char *buffer, char **stash)
 	free(*stash);
 	*stash = NULL;
 	return (-1);
+}
+
+int	main(int argc, char **argv)
+{
+	char	*line;
+	int		fd;
+
+	printf("BUFFER_SIZE = %d\n", BUFFER_SIZE);
+	if (argc == 2)
+		fd = open(argv[1], O_RDONLY);
+	else
+		fd = 0;
+	line = get_next_line(fd);
+	while (line != NULL)
+	{
+		printf("line : %s", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
 }

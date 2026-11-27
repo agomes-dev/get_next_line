@@ -6,7 +6,7 @@
 /*   By: andrefe2 <andrefe2@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/21 16:08:41 by andrefe2          #+#    #+#             */
-/*   Updated: 2026/11/26 15:01:48 by andrefe2         ###   ########.fr       */
+/*   Updated: 2026/11/27 12:09:44 by andrefe2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,9 @@ size_t		ft_strlen(const char *str);
 const char	*ft_strchr(const char *s, const char c);
 char		*ft_strjoin(const char *s1, const char *s2);
 char 		*ft_substr(char const *s, unsigned int start, size_t len);
+int			ft_free_all(char *buffer, char **stash);
+char		*ft_extract_line(char **stash);
+int			ft_read_to_stash(int fd, char **stash);
+int			ft_append_buffer(char *buffer, char **stash);
 
 #endif
